@@ -1,0 +1,9 @@
+{
+  "model": "ridge",
+  "ridge_alpha": 1.0,
+  "gözlem_sayısı": 81,
+  "özellik_sayısı": 8,
+  "eğitim_R_kare": 0.09944577210855332,
+  "hedef_sütunu": "belediye_atik_yillara_gore__Amount_of_Waste_Per_Capita",
+  "not": "R-kare eğitim verisindedir; prototipte açıklama amacıyla raporlanır, tahmin başarısı iddiası değildir."
+}

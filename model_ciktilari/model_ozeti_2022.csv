@@ -1,0 +1,9 @@
+﻿Değişken,Kaynak sütun,Standartlaştırılmış katsayı,Ortalama mutlak katkı,Küresel göreli önem (%)
+Konaklama doluluk oranı,belediye_belgeli_konaklama__DOLULUK_ORANI%_TOPLAM,-0.1936266893862087,0.15204956918331514,27.54853653457407
+Konaklama tesise geliş sayısı,belediye_belgeli_konaklama__TESİSE_GELİŞ_SAYISI_TOPLAM,0.3124001486224668,0.13112810498076422,23.75795873789589
+Toplam nüfus,nufus__NG_ADNKS,-0.20475503297581524,0.09637155020915633,17.46072143505825
+Konaklama ortalama kalış süresi,belediye_belgeli_konaklama__ORTALAMA_KALIŞ_SÜRESİ_TOPLAM,0.09646607663988596,0.07288319262857328,13.2050705942084
+Ortalama hanehalkı büyüklüğü,"İllere_Göre_Ortalama_Hanehalkı_Büyüklüğü_(TR,DF_ADNKS_T25,1.1)__NG_ADNKS",-0.07482714954026101,0.05746411253978843,10.41142182928954
+Kişi başı GSYH,kisi_basi_gshy_temiz__Gross_domestic_product_per_capita_at_current_prices,-0.03232986698519178,0.025401364144565192,4.602251830920426
+Konaklama geceleme,belediye_belgeli_konaklama__GECELEME_TOPLAM,0.03401276467457727,0.013685177463592544,2.4794980568697262
+Yabancı nüfus,yabanci_nufus__Address_Based_Population_Registration_System,-0.008977329555129143,0.0029503101116752054,0.5345409811836971
