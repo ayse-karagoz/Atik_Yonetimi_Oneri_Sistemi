@@ -298,13 +298,19 @@ def konaklama_kolonu(kolon: str) -> bool:
     return "konaklama" in ad and "yogunluk" in ad
 
 
-def eksikleri_doldur(df: pd.DataFrame, tohum: int = 42) -> pd.DataFrame:
-    """Sayısal boşlukları doldürür ve uygulanan yöntemi konsola bildirir."""
+def eksikleri_doldur(df: pd.DataFrame, tohum: int = 42) -> tuple[pd.DataFrame, pd.Series]:
+    """Sayısal boşlukları doldurur ve sentetikleşen satırları döndürür.
+
+    Doldurulan hücre gerçek gözlem değildir. Bu nedenle herhangi bir sütununda
+    burada üretilmiş değer bulunan satır ``is_synthetic=True`` kabul edilir.
+    """
     uretec = np.random.default_rng(tohum)
+    sentetik_satirlar = pd.Series(False, index=df.index, dtype=bool)
     for kolon in [k for k in df.columns if k != "İl"]:
         eksik = int(df[kolon].isna().sum())
         if not eksik:
             continue
+        eksik_maskesi = df[kolon].isna()
         gozlem = pd.to_numeric(df[kolon], errors="coerce").dropna()
         if konaklama_kolonu(kolon):
             if len(gozlem) >= 2:
@@ -312,18 +318,21 @@ def eksikleri_doldur(df: pd.DataFrame, tohum: int = 42) -> pd.DataFrame:
                 if alt == ust:
                     alt, ust = max(0, alt * 0.8), ust * 1.2 if ust else 1.0
                 df.loc[df[kolon].isna(), kolon] = uretec.uniform(alt, ust, eksik)
+                sentetik_satirlar |= eksik_maskesi
                 print(f"  {kolon}: {eksik} eksik değer, gözlenen %5-%95 aralığında ({alt:.3g}-{ust:.3g}) rastgele mock veri ile dolduruldu.")
             else:
                 # Hiç gözlem yoksa biriminizi biliyorsanız bu aralığı aşağıda değiştirin.
                 df.loc[df[kolon].isna(), kolon] = uretec.uniform(0, 100, eksik)
+                sentetik_satirlar |= eksik_maskesi
                 print(f"  {kolon}: {eksik} eksik değer, gözlem olmadığı için varsayılan 0-100 mock aralığıyla dolduruldu.")
         elif len(gozlem):
             ortanca = float(gozlem.median())
             df[kolon] = df[kolon].fillna(ortanca)
+            sentetik_satirlar |= eksik_maskesi
             print(f"  {kolon}: {eksik} eksik değer, sütun ortancasıyla ({ortanca:.3g}) dolduruldu.")
         else:
             print(f"  {kolon}: tamamı boş olduğu için uydurma değer üretilmedi (sütun korunuyor).")
-    return df
+    return df, sentetik_satirlar
 
 
 def konaklama_sentetik_2024(veri_klasoru: Path) -> pd.DataFrame | None:
@@ -410,6 +419,17 @@ def calistir(veri_klasoru: Path, yil: int, cikti: Path) -> None:
         raise FileNotFoundError(f"{veri_klasoru} içinde CSV/XLS/XLSX bulunamadı.")
 
     birlesik = pd.DataFrame({"İl": ILLER})
+    sentetik_satirlar = pd.Series(False, index=birlesik.index, dtype=bool)
+    sentetik_neden = pd.Series(pd.NA, index=birlesik.index, dtype="string")
+
+    def sentetik_isaretle(maske: pd.Series, neden: str) -> None:
+        """Satır kökenini tek yerde, denetlenebilir biçimde kaydeder."""
+        maske = maske.reindex(birlesik.index, fill_value=False).astype(bool)
+        sentetik_satirlar.loc[maske] = True
+        onceki = sentetik_neden.loc[maske]
+        sentetik_neden.loc[maske] = np.where(
+            onceki.notna(), onceki + "; " + neden, neden
+        )
     konaklama_yuklendi = False
     kentsel_kirsal_yuklendi = False
     for dosya in dosyalar:
@@ -439,6 +459,7 @@ def calistir(veri_klasoru: Path, yil: int, cikti: Path) -> None:
         sentetik_konaklama = konaklama_sentetik_2024(veri_klasoru)
         if sentetik_konaklama is not None:
             birlesik = birlesik.merge(sentetik_konaklama, on="İl", how="left", validate="one_to_one")
+            sentetik_isaretle(pd.Series(True, index=birlesik.index), "2024 belediye belgeli konaklama sentetik")
             print(f"  Başarılı: {len(sentetik_konaklama)} il ve {len(sentetik_konaklama.columns) - 1} sentetik konaklama sütunu eklendi.")
 
     if yil == 2020 and not kentsel_kirsal_yuklendi:
@@ -446,12 +467,20 @@ def calistir(veri_klasoru: Path, yil: int, cikti: Path) -> None:
         sentetik_kentsel_kirsal = kentsel_kirsal_sentetik_2020(veri_klasoru)
         if sentetik_kentsel_kirsal is not None:
             birlesik = birlesik.merge(sentetik_kentsel_kirsal, on="İl", how="left", validate="one_to_one")
+            sentetik_isaretle(pd.Series(True, index=birlesik.index), "2020 kentsel/kırsal nüfus sentetik")
             print(f"  Başarılı: {len(sentetik_kentsel_kirsal)} il ve {len(sentetik_kentsel_kirsal.columns) - 1} sentetik kentsel/kırsal sütunu eklendi.")
 
-    birlesik = eksikleri_doldur(birlesik)
+    birlesik, doldurulan_satirlar = eksikleri_doldur(birlesik)
+    if doldurulan_satirlar.any():
+        sentetik_isaretle(doldurulan_satirlar, "eksik değer doldurma")
     # Kaynakların okunma sırası değişse bile bütün yıl dosyalarında özellik
     # dizilimi sabit kalsın; yıl bilgisi yalnızca dosya adında yer alır.
-    birlesik = birlesik[["İl"] + sorted(k for k in birlesik.columns if k != "İl")]
+    birlesik["is_synthetic"] = sentetik_satirlar.astype(bool)
+    birlesik["synthetic_reason"] = sentetik_neden.where(sentetik_satirlar, pd.NA)
+    birlesik = birlesik[
+        ["İl", "is_synthetic", "synthetic_reason"]
+        + sorted(k for k in birlesik.columns if k not in {"İl", "is_synthetic", "synthetic_reason"})
+    ]
     birlesik.to_csv(cikti, index=False, encoding="utf-8-sig")
     print(f"\nTamamlandı: {len(birlesik)} il, {len(birlesik.columns) - 1} veri sütunu")
     print(f"Çıktı: {cikti.resolve()}")

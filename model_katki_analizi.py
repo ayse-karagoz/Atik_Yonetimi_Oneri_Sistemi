@@ -58,10 +58,24 @@ def sutun_bul(df: pd.DataFrame, aranan: str) -> str:
 
 
 def veriyi_hazirla(girdi: Path) -> tuple[pd.DataFrame, str, dict[str, str], pd.DataFrame]:
-    """Veriyi okur, sayısallaştırır ve eksikleri sütun ortancası ile doldurur."""
+    """Yalnızca gerçek satırları kullanır, sayısallaştırır ve eksikleri doldurur."""
     df = pd.read_csv(girdi)
     if "İl" not in df.columns:
         raise KeyError("Girdide 'İl' sütunu bulunamadı.")
+    if "is_synthetic" not in df.columns:
+        raise KeyError("Girdide 'is_synthetic' sütunu yok; gerçek ve sentetik kayıtlar ayrıştırılamaz.")
+
+    sentetik = df["is_synthetic"].astype("string").str.strip().str.lower()
+    gecerli_degerler = {"true", "false", "1", "0"}
+    gecersiz = sentetik.notna() & ~sentetik.isin(gecerli_degerler)
+    if gecersiz.any() or sentetik.isna().any():
+        raise ValueError("'is_synthetic' yalnızca true/false değerlerini içermeli ve boş olmamalı.")
+    sentetik_maske = sentetik.isin({"true", "1"})
+    if sentetik_maske.any():
+        print(f"{int(sentetik_maske.sum())} sentetik satır eğitim ve metriklerden çıkarıldı.")
+    df = df.loc[~sentetik_maske].copy()
+    if df.empty:
+        raise ValueError("is_synthetic=False olan gerçek satır kalmadı.")
 
     hedef_sutunu = sutun_bul(df, HEDEF_ANAHTARI)
     secilenler = {etiket: sutun_bul(df, aranan) for etiket, aranan in OZELLIKLER}

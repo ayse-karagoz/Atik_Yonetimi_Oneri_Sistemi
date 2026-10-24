@@ -13,10 +13,32 @@ import pandas as pd
 import streamlit as st
 from sklearn.preprocessing import StandardScaler
 
+from metin_sablonlari import (
+    EGITIM_VERISI_NOTU_SABLONU,
+    ILISKI_UYARISI,
+    KONAKLAMA_NOTU,
+    il_sonuc_cumlesi,
+)
 from model_katki_analizi import modeli_calistir, veriyi_hazirla
+from veri_cekme.birlesik_il_verileri import standart_il
 
 
 GIRDI = Path("il_verileri_2022.csv")
+ATIK_KAYNAGI = Path("veri/belediye_atik_yillara_gore.csv")
+PROJEKSIYON_DOSYASI = Path("projeksiyon.csv")
+ONERI_DOSYASI = Path("oneri_tablosu.csv")
+HEDEF_SUTUNU = "Amount of Waste Per Capita ({yil})"
+YILLAR = (2020, 2022, 2024)
+
+# Bu eşleştirme sabittir; seçili ildeki en yüksek katkı değişkeni, yalnızca
+# aynı bağlam için araştırılmış uygulama örnekleriyle gösterilir.
+ONERI_ATAMALARI = {
+    "Konaklama doluluk oranı": "Yüksek konaklama doluluk oranı",
+    "Konaklama tesise geliş sayısı": "Yüksek konaklama tesise geliş sayısı",
+    "Toplam nüfus": "Yüksek toplam nüfus / yoğun kent bağlamı",
+    "Konaklama ortalama kalış süresi": "Yüksek ortalama kalış süresi",
+    "Ortalama hanehalkı büyüklüğü": "Küçük hane büyüklüğü",
+}
 
 
 @st.cache_data(show_spinner="Veri ve açıklama modeli hazırlanıyor...")
@@ -46,6 +68,47 @@ def analizi_yukle(girdi_yolu: str) -> dict[str, object]:
         "iller": iller,
         "mesafeler": mesafeler,
     }
+
+
+@st.cache_data(show_spinner="Geçmiş gözlemler ve projeksiyon durumu yükleniyor...")
+def atik_serisini_yukle(kaynak_yolu: str, projeksiyon_yolu: str) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """2020, 2022 ve 2024 gerçek hedef gözlemlerini ve 2027 durumunu okur."""
+    kaynak = pd.read_csv(kaynak_yolu)
+    if "REF_AREA" not in kaynak.columns:
+        raise KeyError("Atık kaynağında REF_AREA sütunu bulunamadı.")
+    kaynak["İl"] = kaynak["REF_AREA"].map(standart_il)
+    records: list[dict[str, object]] = []
+    for yil in YILLAR:
+        sutun = HEDEF_SUTUNU.format(yil=yil)
+        if sutun not in kaynak.columns:
+            raise KeyError(f"Atık kaynağında '{sutun}' sütunu bulunamadı.")
+        for _, satir in kaynak.dropna(subset=["İl"]).iterrows():
+            records.append({"İl": satir["İl"], "Yıl": yil, "Kişi başı atık": float(satir[sutun])})
+    gecmis = pd.DataFrame(records)
+
+    if not Path(projeksiyon_yolu).exists():
+        raise FileNotFoundError(f"Projeksiyon durumu bulunamadı: {projeksiyon_yolu}")
+    projeksiyon = pd.read_csv(projeksiyon_yolu).rename(columns={"il": "İl"})
+    gerekli = {
+        "İl", "hedef_yil", "cikti_etiketi", "guvenilirlik", "yontem", "ufuk_yil",
+        "dusuk_senaryo", "baz_senaryo", "yuksek_senaryo", "aralik_80_alt",
+        "aralik_80_ust", "aralik_95_alt", "aralik_95_ust", "is_synthetic", "neden",
+    }
+    eksik = gerekli.difference(projeksiyon.columns)
+    if eksik:
+        raise KeyError(f"Projeksiyon dosyasında eksik sütunlar var: {sorted(eksik)}")
+    return gecmis, projeksiyon
+
+
+@st.cache_data(show_spinner="Uygulama örnekleri yükleniyor...")
+def onerileri_yukle(dosya_yolu: str) -> pd.DataFrame:
+    """Kaynaklı öneri tablosunu okur; metin üretmez veya değiştirmez."""
+    oneriler = pd.read_csv(dosya_yolu)
+    gerekli = {"yön", "örnek yer ve yıl", "ne yapıldı", "raporlanan sonuç", "kaynak bağlantısı", "kanıt düzeyi", "öneri uyarısı"}
+    eksik = gerekli.difference(oneriler.columns)
+    if eksik:
+        raise KeyError(f"Öneri dosyasında eksik sütunlar var: {sorted(eksik)}")
+    return oneriler
 
 
 def karsilastirma_illerini_bul(iller: np.ndarray, mesafeler: np.ndarray, secili_il: str) -> tuple[str, str, float, float]:
@@ -82,7 +145,10 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.title("İl Atık Profili")
-    st.write("2022 il verisindeki ilişkileri, standartlaştırılmış özellikler ve Ridge regresyon katkılarıyla inceler.")
+    st.write(
+        "Katkı analizi yalnızca gerçek 2022 açıklayıcı verisiyle hesaplanır. "
+        "Geçmiş kişi başı atık değerleri 2020, 2022 ve 2024 için ayrıca gösterilir."
+    )
 
     if not GIRDI.exists():
         st.error(f"Girdi dosyası bulunamadı: {GIRDI}")
@@ -96,6 +162,12 @@ def main() -> None:
         secili_il = st.selectbox("İl", iller, index=varsayilan)
         st.caption("Mesafeler, modelde kullanılan sekiz açıklayıcı değişken standartlaştırıldıktan sonra hesaplanır.")
         st.caption(f"Ridge eğitim R²: {analiz['metrikler']['eğitim_R_kare']:.3f}. Bu değer tahmin performansı iddiası değildir.")
+
+    if not ATIK_KAYNAGI.exists() or not PROJEKSIYON_DOSYASI.exists() or not ONERI_DOSYASI.exists():
+        st.error("Geçmiş değer, projeksiyon durumu veya öneri dosyası bulunamadı.")
+        st.stop()
+    gecmis, projeksiyonlar = atik_serisini_yukle(str(ATIK_KAYNAGI.resolve()), str(PROJEKSIYON_DOSYASI.resolve()))
+    oneriler = onerileri_yukle(str(ONERI_DOSYASI.resolve()))
 
     yakin_il, zit_il, yakin_mesafe, zit_mesafe = karsilastirma_illerini_bul(
         analiz["iller"], analiz["mesafeler"], secili_il
@@ -114,17 +186,78 @@ def main() -> None:
     with zit:
         il_karti("Zıt il", zit_il, zit_atik, ulusal_ortalama, zit_mesafe)
 
+    st.subheader(f"{secili_il} için geçmiş değerler ve 2027 projeksiyonu")
+    secili_gecmis = gecmis[gecmis["İl"] == secili_il].sort_values("Yıl")
+    gecmis_sutunlari = st.columns(4)
+    for sutun, yil in zip(gecmis_sutunlari[:3], YILLAR):
+        deger = float(secili_gecmis.loc[secili_gecmis["Yıl"] == yil, "Kişi başı atık"].iloc[0])
+        with sutun:
+            st.metric(f"{yil} gözlenen", f"{deger:.2f} kg/kişi-gün")
+    durum = projeksiyonlar.loc[projeksiyonlar["İl"] == secili_il].iloc[0]
+    with gecmis_sutunlari[3]:
+        st.metric("2027 baz senaryo", f"{float(durum['baz_senaryo']):.2f} kg/kişi-gün")
+    st.warning(
+        "2027 sayıları güvenilmez göstergedir. Geriye dönük sınamada yöntem, "
+        "son bilinen il değeri bazını geçemedi. Bu değer gerçek gözlem değildir."
+    )
+    senaryolar = pd.DataFrame({
+        "Senaryo": ["Düşük", "Baz", "Yüksek"],
+        "2027 kişi başı atık (kg/kişi-gün)": [
+            float(durum["dusuk_senaryo"]),
+            float(durum["baz_senaryo"]),
+            float(durum["yuksek_senaryo"]),
+        ],
+        "%80 aralık": [
+            f"{float(durum['aralik_80_alt']):.2f}–{float(durum['aralik_80_ust']):.2f}"
+            for _ in range(3)
+        ],
+        "%95 aralık": [
+            f"{float(durum['aralik_95_alt']):.2f}–{float(durum['aralik_95_ust']):.2f}"
+            for _ in range(3)
+        ],
+    })
+    st.dataframe(senaryolar, hide_index=True, width="stretch", column_config={
+        "2027 kişi başı atık (kg/kişi-gün)": st.column_config.NumberColumn(format="%.2f"),
+    })
+    st.caption(
+        f"Yöntem: {durum['yontem']}. Ufuk: {int(durum['ufuk_yil'])} yıl. "
+        f"Çıktı is_synthetic={bool(durum['is_synthetic'])}."
+    )
+    st.caption(f"Gerekçe: {durum['neden']}")
+    st.caption("Yalnızca 3 veri noktası kullanıldı. Aralıklar gösterilir; bu bir tahmin değildir.")
+
     katkilar = analiz["katkilar"]
     secili_katki = katkilar[katkilar["İl"] == secili_il].copy()
     secili_katki["Mutlak katkı"] = secili_katki["Katkı (standartlaştırılmış birim)"].abs()
     secili_katki = secili_katki.sort_values("Mutlak katkı", ascending=False)
-    baskin_iki = secili_katki.head(2)["Değişken"].tolist()
-    cümle = (
-        f"Bu ilde kişi başı atık miktarının ulusal ortalamadan farklı olmasında en yüksek katkıya sahip "
-        f"değişkenler sırasıyla {baskin_iki[0]} ve {baskin_iki[1]}'dir. "
-        "Not: Bu bir ilişkidir, neden olduğu kanıtlanmamıştır."
+    baskin_uc = secili_katki.head(3)["Değişken"].tolist()
+    # İlk iki göreli katkı arasındaki fark %5 puandan küçükse ağırlıklar yakın sayılır.
+    yakin_katki = (
+        len(secili_katki) >= 2
+        and abs(float(secili_katki.iloc[0]["Göreli katkı payı (%)"]) - float(secili_katki.iloc[1]["Göreli katkı payı (%)"])) < 5
     )
-    st.info(cümle)
+    st.info(il_sonuc_cumlesi(secili_il, secili_atik, ulusal_ortalama, baskin_uc, yakin_katki))
+    st.caption(ILISKI_UYARISI)
+    st.caption(EGITIM_VERISI_NOTU_SABLONU.format(il=secili_il))
+    st.caption(KONAKLAMA_NOTU)
+
+    st.subheader("İlişkili uygulama örnekleri")
+    st.caption("Örnekler, seçili ilde en yüksek katkıya sahip değişkenlerle eşleştirilir. Bu eşleştirme etki kanıtı değildir.")
+    for degisken in baskin_uc:
+        yon_basligi = ONERI_ATAMALARI.get(degisken)
+        if yon_basligi is None:
+            continue
+        eslesenler = oneriler[oneriler["yön"].astype(str).str.startswith(yon_basligi, na=False)]
+        for _, oneri in eslesenler.iterrows():
+            with st.expander(f"{degisken}: {oneri['örnek yer ve yıl']}", expanded=False):
+                if oneri["örnek yer ve yıl"] == "kanıt bulunamadı":
+                    st.write("Kanıt bulunamadı.")
+                    continue
+                st.write(f"Ne yapıldı: {oneri['ne yapıldı']}")
+                st.write(f"Raporlanan sonuç: {oneri['raporlanan sonuç']}")
+                st.markdown(f"Kaynak: [{oneri['kaynak türü']}]({oneri['kaynak bağlantısı']})")
+                st.caption(str(oneri["öneri uyarısı"]))
+                st.caption(f"Türkiye için bilinen engeller: {oneri['Türkiye için bilinen engeller']}")
 
     sol, sag = st.columns((1.15, 0.85))
     with sol:
@@ -158,7 +291,7 @@ def main() -> None:
             "Göreli katkı payı (%)": st.column_config.NumberColumn(format="%.1f%%"),
         },
     )
-    st.caption("Model, tahmin yapmak için değil, gerçek atık değerinin hangi değişkenlerle ilişkili olduğunu görünür kılmak için kullanılır.")
+    st.caption("Model, atık değeriyle hangi değişkenlerin ilişkili olduğunu görünür kılmak için kullanılır.")
 
 
 if __name__ == "__main__":
