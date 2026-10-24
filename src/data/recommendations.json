@@ -1,0 +1,74 @@
+[
+  {
+    "yön": "Yüksek konaklama doluluk oranı — modelde kişi başı atıkla negatif ilişkili; nedensel değildir",
+    "örnek yer ve yıl": "Sofitel Bangkok Sukhumvit, Bangkok, 2018 raporu (uygulama dönemi raporda yıl olarak doğrulanamadı)",
+    "ne yapıldı": "Mutfak atığını akıllı tartıyla ölçüp sınıflandırdı; açık büfedeki üretim miktarını kontrol etti; tedarikçi siparişlerini esnetti; günlük şef toplantıları yaptı.",
+    "raporlanan sonuç": "Gıda atığının parasal değerinde 15 haftada %50 azalma; tahmini yıllık 60.000 ABD doları tasarruf. Kaynak s. 9. Bu, otel gıda atığı sonucudur; il bazında kişi başı belediye atığı sonucu değildir.",
+    "kaynak bağlantısı": "https://food.ec.europa.eu/document/download/590e3d46-46ac-4c26-82af-400999b5f38d_en?filename=fw_lib_wri-business-case_2018.pdf&prefLang=bg#page=9",
+    "kaynak türü": "kurumsal rapor (WRI/Champions 12.3; AB Komisyonu arşivi)",
+    "kanıt düzeyi": "Tek işletme vaka bildirimi; müdahaleler birlikte uygulanmış, karşı-olgusal değerlendirme yok. Belediye atığına doğrudan aktarım doğrulanmadı.",
+    "aktarılabilirlik koşulları (hukuki yetki, altyapı, gelir)": "Otel işletmesinin tedarik ve mutfak süreçlerini değiştirme yetkisi; tartım ve kayıt sistemi; çalışan zamanı/eğitimi; tedarikçiyle esnek sipariş ilişkisi; gerekirse organik atık için lisanslı toplama/işleme hattı.",
+    "Türkiye için bilinen engeller": "Hanelerde ayrı toplama yaygın değildir ve yerelde yatırım eksikliği bildirilmiştir (OECD 2019, s. 76–77). Otel içi ölçümün belediye atık istatistiğine etkisi ayrıca izlenmelidir: https://www.oecd.org/content/dam/oecd/en/publications/reports/2019/02/oecd-environmental-performance-reviews-turkey-2019_g1g9a7ee/9789264309753-en.pdf#page=77",
+    "öneri uyarısı": "Bu uygulama başka yerlerde denenmiştir; bu ilde etkisi kesin değildir. Kanıt düzeyi: Tek işletme vaka bildirimi; müdahaleler birlikte uygulanmış, karşı-olgusal değerlendirme yok. Belediye atığına doğrudan aktarım doğrulanmadı. Karar kullanıcıya aittir."
+  },
+  {
+    "yön": "Yüksek konaklama tesise geliş sayısı — modelde kişi başı atıkla pozitif ilişkili; nedensel değildir",
+    "örnek yer ve yıl": "MGM Gold Strike Resort and Casino, Robinsonville, Mississippi, 2018 raporu (uygulama dönemi raporda yıl olarak doğrulanamadı)",
+    "ne yapıldı": "Yıllık 650.000'den fazla misafire hizmet veren tesiste mutfak atığını tartıp sınıflandırdı; açık büfenin son bölümündeki fazla üretimi hedefledi; bazı ürünleri servis sonunda à la carte hazırlamaya geçirdi; çalışan katılımı için haftalık ödül ve toplantılar kullandı.",
+    "raporlanan sonuç": "12 ayda gıda atığı miktarında %80'den fazla azalma ve gıda maliyetinde %5'ten fazla düşüş. Kaynak s. 9. Sonuç tesis gıda atığı/maliyeti içindir; il bazında kişi başı belediye atığı sonucu değildir.",
+    "kaynak bağlantısı": "https://food.ec.europa.eu/document/download/590e3d46-46ac-4c26-82af-400999b5f38d_en?filename=fw_lib_wri-business-case_2018.pdf&prefLang=bg#page=9",
+    "kaynak türü": "kurumsal rapor (WRI/Champions 12.3; AB Komisyonu arşivi)",
+    "kanıt düzeyi": "Tek işletme vaka bildirimi; yüksek ziyaretçi hacmi belirtilmiş olsa da karşı-olgusal değerlendirme yok. Konaklama yoğunluğunun etkisi veya Türkiye'ye etki büyüklüğü çıkarılamaz.",
+    "aktarılabilirlik koşulları (hukuki yetki, altyapı, gelir)": "Otel/tesis yönetiminin menü, üretim planı ve tedarik üzerinde yetkisi; düzenli tartım; personel eğitimine ve porsiyon/servis değişikliğine bütçe; organik atığın ayrı toplanması ve işlenmesi için hizmet sağlayıcı.",
+    "Türkiye için bilinen engeller": "İlçe belediyeleri toplama, büyükşehir belediyeleri ise işleme/bertaraftan sorumludur; tesis-belediye koordinasyonu gerekir. OECD, hane düzeyinde ayrı toplamanın yaygın olmadığını ve küçük alanlarda yatırım/uygulama zorluğunu bildirir: https://www.oecd.org/en/publications/2019/02/oecd-environmental-performance-reviews-turkey-2019_g1g9a7ee/full-report/component-10.html",
+    "öneri uyarısı": "Bu uygulama başka yerlerde denenmiştir; bu ilde etkisi kesin değildir. Kanıt düzeyi: Tek işletme vaka bildirimi; yüksek ziyaretçi hacmi belirtilmiş olsa da karşı-olgusal değerlendirme yok. Konaklama yoğunluğunun etkisi veya Türkiye'ye etki büyüklüğü çıkarılamaz. Karar kullanıcıya aittir."
+  },
+  {
+    "yön": "Yüksek toplam nüfus / yoğun kent bağlamı — modelde kişi başı atıkla negatif ilişkili; nedensel değildir",
+    "örnek yer ve yıl": "Taipei, 2000–2014",
+    "ne yapıldı": "2000'de su kullanımına bağlı ücreti bırakıp torba başına ücretlendirme başlattı; resmi torba zorunluluğu getirdi; geri dönüştürülebilirleri ücret dışında tuttu; mutfak atığını ayrı toplamayı kent geneline yaydı.",
+    "raporlanan sonuç": "Kişi başı günlük evsel atık hacmi 1999'da 1,12 kg'dan 2014'te 0,37 kg'a düştü; rapor evsel atık hacminde %66 düşüş bildiriyor. Kaynak s. 2. Bu, çoklu politika paketinin kurum raporundaki öncesi-sonrası sonucudur.",
+    "kaynak bağlantısı": "https://www-ws.gov.taipei/Download.ashx?icon=..pdf&n=NTEyMjMxNzM2MzE0NC5wZGY%3D&u=LzAwMS9VcGxvYWQvcHVibGljL0F0dGFjaG1lbnQvNTEyMjMxNzM2MzE0NC5wZGY%3D#page=2",
+    "kaynak türü": "resmi/kurumsal rapor (Taipei City Government)",
+    "kanıt düzeyi": "Kurumun öncesi-sonrası raporu; torba ücreti, geri dönüşüm ve mutfak atığı toplaması birlikte yürütüldü. Nedensel etkinin yalnızca bir araca atfedilmesi doğrulanmadı.",
+    "aktarılabilirlik koşulları (hukuki yetki, altyapı, gelir)": "Atık tarifesi/ücretlendirme için açık hukuki yetki; standart torbanın satış ve denetim ağı; ücretsiz veya kolay erişilen ayrı toplama; mutfak atığı işleme kapasitesi; düşük gelirli haneler için koruyucu tarife tasarımı; kaçak döküm denetimi.",
+    "Türkiye için bilinen engeller": "Türkiye'de evsel katı atık tesisleri için tam maliyet esaslı tarife düzenlemesi vardır; ancak torba başına ücretin yerel hukuki uygulanabilirliği bu çalışmada doğrulanamadı. OECD, ayrı toplamanın yaygın olmadığını ve yerel yatırımın düşük kaldığını bildirir: https://resmigazete.gov.tr/eskiler/2010/10/20101027-7.htm ; https://www.oecd.org/content/dam/oecd/en/publications/reports/2019/02/oecd-environmental-performance-reviews-turkey-2019_g1g9a7ee/9789264309753-en.pdf#page=77",
+    "öneri uyarısı": "Bu uygulama başka yerlerde denenmiştir; bu ilde etkisi kesin değildir. Kanıt düzeyi: Kurumun öncesi-sonrası raporu; torba ücreti, geri dönüşüm ve mutfak atığı toplaması birlikte yürütüldü. Nedensel etkinin yalnızca bir araca atfedilmesi doğrulanmadı. Karar kullanıcıya aittir."
+  },
+  {
+    "yön": "Yüksek toplam nüfus / yoğun kent bağlamı — modelde kişi başı atıkla negatif ilişkili; nedensel değildir",
+    "örnek yer ve yıl": "Seul, 1995 sonrası (OECD'nin raporladığı uygulama)",
+    "ne yapıldı": "Ön ödemeli torbayla artık atığı hacme göre ücretlendirdi; gıda atığında RFID ile ağırlık veya hacim esaslı ölçüm kullandı; geri dönüştürülebilirleri ayrı ve ücretsiz topladı; düşük gelirli gruplara indirim/muafiyet tanıdı.",
+    "raporlanan sonuç": "OECD, uygulamanın iki yıl içinde belediye katı atığı oluşumunda %11 düşüşle sonuçlandığını bildiriyor. Sayfa numarası uygulanabilir değil; çevrimiçi rapor bölümü 4.4.3. Sonuç, OECD'nin derlediği program sonucudur.",
+    "kaynak bağlantısı": "https://www.oecd.org/en/publications/economic-instruments-for-the-circular-economy-in-italy_33e11c28-en/full-report/component-9.html",
+    "kaynak türü": "resmi/kurumsal rapor (OECD)",
+    "kanıt düzeyi": "OECD ikincil derlemesi; kaynak metinde karşı-olgusal tasarım raporlanmıyor. Aynı sayfa kaçak dökümün başlangıçta sorun olduğunu ve ceza/ihbar ile ele alındığını belirtiyor.",
+    "aktarılabilirlik koşulları (hukuki yetki, altyapı, gelir)": "Tarife belirleme ve sosyal koruma yetkisi; tartım/RFID veya standart torba altyapısı; ayrı toplama ve işleme kapasitesi; kişisel veri ve cihaz işletimi kuralları; denetim ve kaçak döküm müdahalesi.",
+    "Türkiye için bilinen engeller": "Türkiye'de toplama ile işleme/bertaraf sorumlulukları belediye kademeleri arasında ayrılır; bu nedenle ortak tarife, veri ve operasyon düzenlemesi gerekir. OECD ayrıca sınırlı yerel yatırım ve yaygın olmayan hane ayrı toplamasını engel olarak bildirir: https://www.oecd.org/en/publications/2019/02/oecd-environmental-performance-reviews-turkey-2019_g1g9a7ee/full-report/component-10.html",
+    "öneri uyarısı": "Bu uygulama başka yerlerde denenmiştir; bu ilde etkisi kesin değildir. Kanıt düzeyi: OECD ikincil derlemesi; kaynak metinde karşı-olgusal tasarım raporlanmıyor. Aynı sayfa kaçak dökümün başlangıçta sorun olduğunu ve ceza/ihbar ile ele alındığını belirtiyor. Karar kullanıcıya aittir."
+  },
+  {
+    "yön": "Yüksek ortalama kalış süresi — modelde kişi başı atıkla pozitif ilişkili; nedensel değildir",
+    "örnek yer ve yıl": "kanıt bulunamadı",
+    "ne yapıldı": "Ortalama kalış süresini doğrudan hedefleyip kişi başı belediye atığını azalttığını raporlayan, açılabilir ve sonuç içeren bir uygulama örneği bu taramada bulunamadı.",
+    "raporlanan sonuç": "BILINMIYOR",
+    "kaynak bağlantısı": "",
+    "kaynak türü": "",
+    "kanıt düzeyi": "",
+    "aktarılabilirlik koşulları (hukuki yetki, altyapı, gelir)": "",
+    "Türkiye için bilinen engeller": "",
+    "öneri uyarısı": ""
+  },
+  {
+    "yön": "Küçük hane büyüklüğü (başka deyişle yüksek ortalama hane büyüklüğünün modelde negatif ilişkisi) — nedensel değildir",
+    "örnek yer ve yıl": "kanıt bulunamadı",
+    "ne yapıldı": "Hane büyüklüğünü doğrudan değiştirmeyi amaçlayıp kişi başı belediye atığını azalttığını raporlayan, açılabilir ve sonuç içeren bir uygulama örneği bu taramada bulunamadı.",
+    "raporlanan sonuç": "BILINMIYOR",
+    "kaynak bağlantısı": "",
+    "kaynak türü": "",
+    "kanıt düzeyi": "",
+    "aktarılabilirlik koşulları (hukuki yetki, altyapı, gelir)": "",
+    "Türkiye için bilinen engeller": "",
+    "öneri uyarısı": ""
+  }
+]

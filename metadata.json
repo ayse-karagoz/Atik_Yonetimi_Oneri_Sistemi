@@ -1,0 +1,8 @@
+{
+  "name": "İl Atık Profili ve Öneri Sistemi",
+  "description": "2020-2024 il bazlı atık profilleri, standartlaştırılmış değişkenler ve Ridge regresyon katkı analizi platformu.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
